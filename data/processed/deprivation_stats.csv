@@ -1,0 +1,8 @@
+imd_quintile,n_sites,mean_spills,median_spills,mean_hours,pct_reliable
+"Q1
+(most deprived)",6250,27.91,13.0,125.9,72.3
+Q2,5334,37.46,22.0,169.31,92.61
+Q3,9445,28.94,16.0,101.31,85.53
+Q4,4534,38.68,23.0,144.69,89.26
+"Q5
+(least deprived)",3125,27.93,18.0,89.61,86.34
