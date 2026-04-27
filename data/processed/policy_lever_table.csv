@@ -1,0 +1,7 @@
+Feature,Finding,Policy Recommendation
+Historical avg spills,Strongest predictor — chronic spillers continue spilling,Prioritise infrastructure upgrades at historically chronic sites
+Monitor reliability (%),Lower reliability = fewer recorded spills (undercounting),Mandate 100% monitor uptime — especially in deprived areas
+Avg spill duration (hrs),Longer average spills predict higher annual totals,Target treatment capacity at sites with long average durations
+Spill severity score,Combined frequency×duration captures true pollution burden,Use severity score (not just count) for enforcement ranking
+Site IMD score,Modest direct effect — but compounds with monitoring gaps,Ofwat penalties should account for community deprivation level
+Year-on-year change,Sites deteriorating year-on-year tend to continue worsening,Fast-track investment where year-on-year trend is worsening
