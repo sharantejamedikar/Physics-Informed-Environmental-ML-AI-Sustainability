@@ -1,0 +1,181 @@
+============================================================
+REPORT DATA EXTRACTION
+============================================================
+
+### MODEL COMPARISON ###
+             Model      RMSE       MAE        R²       NSE  Train Time (s)  Inference Time (s)  Model Size (KB)
+           XGBoost 48.860000 31.258794 -0.649001 -0.649001            0.90              0.0059      2125.800000
+              LSTM 35.513233 19.000263  0.128847  0.128847           23.33              0.0860      1812.300000
+    Attention-LSTM 45.150602 26.946594 -0.408125 -0.408125           29.44              0.1092      1859.400000
+         PINN-LSTM 32.052921 17.394581  0.290342  0.290342           27.40              0.0842      1812.600000
+Improved PINN-LSTM 42.139049 31.785040 -0.224824 -0.224824            6.27                 NaN       912.364258
+
+### FAIRNESS METRICS ###
+           quartile          model      rmse       mae        mpe    n
+Q1\n(most deprived)        XGBoost 52.434045 32.968674 -32.908516 3014
+Q1\n(most deprived)           LSTM 39.230154 22.064724 -20.282917 3014
+Q1\n(most deprived) Attention-LSTM 48.977240 29.713144 -29.474495 3014
+Q1\n(most deprived)      PINN-LSTM 36.879166 20.278627 -18.262987 3014
+                 Q2        XGBoost 45.701773 29.597452 -29.559046 5981
+                 Q2           LSTM 31.776934 17.135693 -13.337776 5981
+                 Q2 Attention-LSTM 42.289239 25.772697 -25.212717 5981
+                 Q2      PINN-LSTM 29.081023 15.743386 -10.901908 5981
+                 Q3        XGBoost 52.254429 32.869087 -32.850750 3216
+                 Q3           LSTM 38.224120 20.649683 -18.381104 3216
+                 Q3 Attention-LSTM 48.619140 29.027723 -28.689030 3216
+                 Q3      PINN-LSTM 35.257367 19.050594 -16.471512 3216
+                 Q4        XGBoost 46.203664 30.523069 -30.490885 1998
+                 Q4           LSTM 29.800324 15.967827 -13.121397 1998
+                 Q4 Attention-LSTM 42.764452 26.751768 -26.407880 1998
+                 Q4      PINN-LSTM 26.825770 14.301431 -10.536160 1998
+
+### COMPRESSION RESULTS ###
+         Model     Compression   RMSE     R²  Size (KB)  Inf Time (s) Size Reduction RMSE Change Fairness Gap
+       XGBoost None (baseline) 48.791 -0.644   2125.796           NaN              —           —            —
+          LSTM None (baseline) 34.743  0.166   1811.746        0.0730              —           —        9.430
+Attention-LSTM None (baseline) 45.322 -0.419   1858.672        0.2175              —           —        6.259
+     PINN-LSTM None (baseline) 32.047  0.291   1812.056        0.0676              —           —       10.053
+          LSTM         Float16 34.741  0.166    907.996        0.0915           -50%     +-0.002        9.430
+          LSTM  Int8 simulated 34.564  0.175   1811.746        0.0710            -0%     +-0.178        9.515
+Attention-LSTM         Float16 45.318 -0.419    932.047        0.2571           -50%     +-0.003        6.222
+Attention-LSTM  Int8 simulated 45.179 -0.410   1858.672        0.2032            -0%     +-0.143        6.284
+     PINN-LSTM         Float16 32.047  0.291    908.306        0.1012           -50%     +-0.000       10.053
+     PINN-LSTM  Int8 simulated 32.129  0.287   1812.056        0.0759            -0%      +0.082       10.295
+Attention-LSTM      Pruned 20% 41.248 -0.175   1858.672        0.2171            -0%     +-4.073        5.502
+          LSTM      Pruned 20% 34.743  0.166   1811.746        0.0709            -0%      +0.000        9.430
+     PINN-LSTM      Pruned 20% 32.047  0.291   1812.056        0.0750            -0%      +0.000       10.053
+Attention-LSTM      Pruned 40% 40.712 -0.145   1858.672        0.1847            -0%     +-4.609        8.010
+          LSTM      Pruned 40% 35.405  0.134   1811.746        0.0785            -0%      +0.662        8.705
+     PINN-LSTM      Pruned 40% 34.503  0.178   1812.056        0.0690            -0%      +2.455       10.294
+Attention-LSTM      Pruned 60% 44.492 -0.367   1858.672        0.1812            -0%     +-0.830        2.485
+          LSTM      Pruned 60% 42.758 -0.263   1811.746        0.0675            -0%      +8.015        5.746
+     PINN-LSTM      Pruned 60% 41.844 -0.209   1812.056        0.0668            -0%      +9.797        7.673
+
+### DEPRIVATION STATS ###
+        imd_quintile  n_sites  mean_spills  median_spills  mean_hours  pct_reliable
+ Q1\n(most deprived)     6250        27.91           13.0      125.90         72.30
+                  Q2     5334        37.46           22.0      169.31         92.61
+                  Q3     9445        28.94           16.0      101.31         85.53
+                  Q4     4534        38.68           23.0      144.69         89.26
+Q5\n(least deprived)     3125        27.93           18.0       89.61         86.34
+
+### POLICY LEVER TABLE ###
+                 Feature                                                     Finding                                            Policy Recommendation
+   Historical avg spills    Strongest predictor — chronic spillers continue spilling Prioritise infrastructure upgrades at historically chronic sites
+ Monitor reliability (%)   Lower reliability = fewer recorded spills (undercounting)       Mandate 100% monitor uptime — especially in deprived areas
+Avg spill duration (hrs)          Longer average spills predict higher annual totals   Target treatment capacity at sites with long average durations
+    Spill severity score  Combined frequency×duration captures true pollution burden      Use severity score (not just count) for enforcement ranking
+          Site IMD score   Modest direct effect — but compounds with monitoring gaps   Ofwat penalties should account for community deprivation level
+     Year-on-year change Sites deteriorating year-on-year tend to continue worsening      Fast-track investment where year-on-year trend is worsening
+
+### DATASET STATISTICS ###
+Total records:        28632
+Unique sites:         26446
+Companies:            10
+Years:                [np.int64(2023), np.int64(2024)]
+Features:             34
+
+Spill count stats:
+count    28632.000
+mean        31.728
+std         38.883
+min          0.000
+25%          3.000
+50%         18.000
+75%         47.000
+max        366.000
+
+EDM operational stats:
+count    28632.000
+mean        91.788
+std         22.498
+min          0.000
+25%         97.090
+50%         99.880
+75%        100.000
+max        100.000
+
+### MONITOR RELIABILITY BY DEPRIVATION ###
+                     n_sites  mean_reliability  pct_reliable
+site_imd_quintile                                           
+Q1\n(most deprived)     5997            89.516         0.824
+Q2                     12040            94.343         0.871
+Q3                      6582            87.500         0.802
+Q4                      4013            94.550         0.880
+
+### SPILL STATS BY COMPANY ###
+                       n_sites  mean_spills  total_hours  mean_reliability
+company                                                                   
+Anglian Water             3006        25.13    273162.75             96.94
+Dwr Cymru Welsh Water      128        39.85         0.00             91.81
+Northumbrian Water        3077        27.89    277751.26             93.86
+Severn Trent Water        4931        24.81    440446.19             95.13
+South West Water          2744        41.70    530736.94             95.91
+Southern Water            1955        30.10    317284.90             47.11
+Thames Water              1283        31.01    196414.05             94.08
+United Utilities          4534        38.68    656014.27             93.79
+Wessex Water              2590        32.97    372340.80             98.43
+Yorkshire Water           4384        33.26    515576.22             93.71
+
+### YOY STATS ###
+Sites in both years: 25949
+count    2144.00
+mean       -4.44
+std        20.16
+min      -202.00
+25%       -12.00
+50%        -1.00
+75%         2.00
+max       149.00
+
+### HYPERPARAMETER TUNING TOP 10 ###
+ hidden_dim  n_layers  dropout  embedding_dim    val_loss
+         64         1      0.2              8 1513.644243
+         64         1      0.2             32 1514.275801
+        128         1      0.3              8 1514.823109
+         32         1      0.3             16 1516.172075
+        128         1      0.2             16 1516.317250
+         32         1      0.3              8 1516.805808
+         32         1      0.2             16 1517.104969
+         64         1      0.1              8 1517.786577
+         64         1      0.1             16 1518.114047
+         64         1      0.3              8 1518.371460
+
+### OUTPUT FIGURES ###
+  fig10_pinn_lambda_ablation.png (60 KB)
+  fig11_pinn_training.png (87 KB)
+  fig12_model_comparison.png (57 KB)
+  fig12_model_comparison_updated.png (76 KB)
+  fig13_predicted_vs_actual.png (226 KB)
+  fig14_fairness_audit.png (209 KB)
+  fig15_fairness_gap.png (44 KB)
+  fig16_shap_xgboost.png (138 KB)
+  fig17_shap_comparison.png (97 KB)
+  fig18_compression_tradeoffs.png (169 KB)
+  fig19_temporal_features.png (162 KB)
+  fig1_spill_distribution.png (96 KB)
+  fig20_hyperparameter_tuning.png (115 KB)
+  fig21_improved_pinn_training.png (63 KB)
+  fig22_full_model_comparison.png (94 KB)
+  fig2_company_performance.png (100 KB)
+  fig3_monitor_reliability.png (118 KB)
+  fig4_deprivation_analysis.png (123 KB)
+  fig5_correlation_heatmap.png (109 KB)
+  fig6_sitelevel_deprivation.png (104 KB)
+  fig7_undercounting.png (105 KB)
+  fig8_xgb_training.png (46 KB)
+  fig9_lstm_training.png (51 KB)
+  fig9b_attention_lstm_training.png (46 KB)
+  fig9c_attention_weights.png (63 KB)
+
+### SHAP FEATURE IMPORTANCE ###
+Top predictors identified by SHAP:
+1. Spill severity score
+2. Historical average spills
+3. Average spill duration (hrs)
+4. EDM operational percentage
+5. Site IMD score
+
+============================================================
+EXTRACTION COMPLETE
+============================================================
